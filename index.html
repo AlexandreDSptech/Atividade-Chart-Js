@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+    <html lang="pt-br">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Chart.Js</title>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        </head>
+        <style>
+            *{
+                text-align: center;
+            }
+            .container{
+                display: flex;
+                justify-content: center;
+                margin-bottom: 100px;
+            }
+            table{
+                height: 400px;
+                width: 500px;
+            }
+            input{
+                border: none;
+                height: 100%;
+                width: 98%;
+            }
+            #myChart1, #myChart2{
+                height: 100px;
+                width: 800px;
+            }
+        </style>
+        <body>
+            <h1>Tabelas com gráficos dinâmicos</h1>
+            <h5>Infelizmente os primeiros valores de Temperatura e Umidade do gráfico de linha são estáticos</h5>
+            <div class="container">
+                <div>
+                    <table cellspacing="0" border="1"> <!-- Copiei essa table do Moodle -->
+                        <tr>
+                            <th>Horário</th>
+                            <th>Temperatura</th>
+                            <th>Umidade</th>
+                        </tr>
+                        <tr>
+                            <td><input type="time" value="12:00" id="hora1"/></td>
+                            <td><input type="number" value="30" id="temp1"/></td>
+                            <td><input type="number" value="80" id="umi1"/></td>
+                        </tr>
+                        <tr>
+                            <td><input type="time" value="13:00" id="hora2"/></td>
+                            <td><input type="number" value="29" id="temp2"/></td>
+                            <td><input type="number" value="82" id="umi2"/></td>
+                        </tr>
+                        <tr>
+                            <td><input type="time" value="14:00" id="hora3"/></td>
+                            <td><input type="number" value="28" id="temp3"/></td>
+                            <td><input type="number" value="80" id="umi3"/></td>
+                        </tr>
+                        <tr>
+                            <td><input type="time" value="15:00" id="hora4"/></td>
+                            <td><input type="number" value="25" id="temp4"/></td>
+                            <td><input type="number" value="85" id="umi4"/></td>
+                        </tr>
+                        <tr>
+                            <td><input type="time" value="16:00" id="hora5"/></td>
+                            <td><input type="number" value="22" id="temp5"/></td>
+                            <td><input type="number" value="80" id="umi5"/></td>
+                        </tr>
+                        <tr>
+                            <td><input type="time" value="17:00" id="hora6"/></td>
+                            <td><input type="number" value="23" id="temp6"/></td>
+                            <td><input type="number" value="83" id="umi6"/></td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <canvas id="myChart1" class="Dash1"></canvas>
+                </div>
+            </div>
+            <div class="container">
+                <table cellspacing="0" border="1"> <!-- Copiei essa table do Moodle -->
+                    <tr>
+                        <th>Mês</th>
+                        <th>Temperatura</th>
+                        <th>Umidade</th>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Janeiro" id="mes1"/></td>
+                        <td><input type="number" value="22" id="temp11"/></td>
+                        <td><input type="number" value="90" id="umi11"/></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Fevereiro" id="mes2"/></td>
+                        <td><input type="number" value="24" id="temp22"/></td>
+                        <td><input type="number" value="89" id="umi22"/></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Março" id="mes3"/></td>
+                        <td><input type="number" value="27" id="temp33"/></td>
+                        <td><input type="number" value="93" id="umi33"/></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Abril" id="mes4"/></td>
+                        <td><input type="number" value="23" id="temp44"/></td>
+                        <td><input type="number" value="87" id="umi44"/></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Maio" id="mes5"/></td>
+                        <td><input type="number" value="20" id="temp55"/></td>
+                        <td><input type="number" value="88" id="umi55"/></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="Junho" id="mes6"/></td>
+                        <td><input type="number" value="18" id="temp66"/></td>
+                        <td><input type="number" value="82" id="umi66"/></td>
+                    </tr>
+                </table>
+                <div>
+                    <canvas id="myChart2"></canvas>
+                </div>
+            </div>
+        </body>
+    </html>
+
+    <!-- INÍCIO DO JS -->
+
+    <script>
+
+        // INÍCIO DO GRÁFICO 1
+
+        var horario1 = hora1.value
+        var horario2 = hora2.value
+        var horario3 = hora3.value
+        var horario4 = hora4.value
+        var horario5 = hora5.value
+        var horario6 = hora6.value
+
+        var temperatura1 = Number(temp1.value)
+        var temperatura2 = Number(temp2.value)
+        var temperatura3 = Number(temp3.value)
+        var temperatura4 = Number(temp4.value)
+        var temperatura5 = Number(temp5.value)
+        var temperatura6 = Number(temp6.value)
+
+        var umidade1 = Number(umi1.value)
+        var umidade2 = Number(umi2.value)
+        var umidade3 = Number(umi3.value)
+        var umidade4 = Number(umi4.value)
+        var umidade5 = Number(umi5.value)
+        var umidade6 = Number(umi6.value)
+        
+        const chart = new Chart('myChart1', {
+            type: 'line',
+            data: {
+                labels: [horario1, horario2, horario3, horario4, horario5, horario6],
+                datasets: [{
+                    label: 'Temperatura',
+                    data: [temperatura1, temperatura2, temperatura3, temperatura4, temperatura5, temperatura6],
+                    backgroundColor: 'rgba(255, 99, 132)',
+                    borderColor: 'rgba(255, 99, 132)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Umidade',
+                    data: [umidade1, umidade2, umidade3, umidade4, umidade5, umidade6],
+                    backgroundColor: 'rgba(54, 162, 235)',
+                    borderColor: 'rgba(54, 162, 235)',
+                    borderWidth: 1
+                }
+            ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // FIM DO GRÁFICO 1
+
+        // INÍCIO DA PARTE DINÂMICA DO GRÁFICO 1
+
+        const changehora1 = document.getElementById('hora1');
+        const changehora2 = document.getElementById('hora2');
+        const changehora3 = document.getElementById('hora3');
+        const changehora4 = document.getElementById('hora4');
+        const changehora5 = document.getElementById('hora5');
+        const changehora6 = document.getElementById('hora6');
+
+        // const changetemp1 = document.getElementById('temp1');
+        const changetemp2 = document.getElementById('temp2');
+        const changetemp3 = document.getElementById('temp3');
+        const changetemp4 = document.getElementById('temp4');
+        const changetemp5 = document.getElementById('temp5');
+        const changetemp6 = document.getElementById('temp6');
+
+        // const changeumi1 = document.getElementById('umi1');
+        const changeumi2 = document.getElementById('umi2');
+        const changeumi3 = document.getElementById('umi3');
+        const changeumi4 = document.getElementById('umi4');
+        const changeumi5 = document.getElementById('umi5');
+        const changeumi6 = document.getElementById('umi6');
+
+        changehora1.addEventListener('input', () => {
+            // Obtenha o valor da input
+            const newValue = changehora1.value;
+            // Atualize os dados do gráfico
+            chart.data.labels[0] = [newValue];
+            chart.update();
+        });
+        changehora2.addEventListener('input', () => {
+            const newValue = changehora2.value;
+            chart.data.labels[1] = [newValue];
+            chart.update();
+        });
+        changehora3.addEventListener('input', () => {
+            const newValue = changehora3.value;
+            chart.data.labels[2] = [newValue];
+            chart.update();
+        });
+        changehora4.addEventListener('input', () => {
+            const newValue = changehora4.value;
+            chart.data.labels[3] = [newValue];
+            chart.update();
+        });
+        changehora5.addEventListener('input', () => {
+            const newValue = changehora5.value;
+            chart.data.labels[4] = [newValue];
+            chart.update();
+        });
+        changehora6.addEventListener('input', () => {
+            const newValue = changehora6.value;
+            chart.data.labels[5] = [newValue];
+            chart.update();
+        });
+
+        // Por algum motivo bizarro que eu não faço ideia do motivo, mas o primeiro buga completamente o gráfico
+        // changetemp1.addEventListener('input', () => {
+        //     const newValue = changetemp1.value;
+        //     chart.data.datasets[0].data[0] = [newValue];
+        //     chart.update();
+        // });
+        changetemp2.addEventListener('input', () => {
+            const newValue = parseInt(changetemp2.value);
+            chart.data.datasets[0].data[1] = [newValue];
+            chart.update();
+        });
+        changetemp3.addEventListener('input', () => {
+            const newValue = parseInt(changetemp3.value);
+            chart.data.datasets[0].data[2] = [newValue];
+            chart.update();
+        });
+        changetemp4.addEventListener('input', () => {
+            const newValue = parseInt(changetemp4.value);
+            chart.data.datasets[0].data[3] = [newValue];
+            chart.update();
+        });
+        changetemp5.addEventListener('input', () => {
+            const newValue = parseInt(changetemp5.value);
+            chart.data.datasets[0].data[4] = [newValue];
+            chart.update();
+        });
+        changetemp6.addEventListener('input', () => {
+            const newValue = parseInt(changetemp6.value);
+            chart.data.datasets[0].data[5] = [newValue];
+            chart.update();
+        });
+
+        // Mesma coisa zzz
+        // changeumi1.addEventListener('input', () => {
+        //     const newValue = parseInt(changeumi1.value);
+        //     chart.data.datasets[1].data[0] = [newValue];
+        //     chart.update();
+        // });
+        changeumi2.addEventListener('input', () => {
+            const newValue = parseInt(changeumi2.value);
+            chart.data.datasets[1].data[1] = [newValue];
+            chart.update();
+        });
+        changeumi3.addEventListener('input', () => {
+            const newValue = parseInt(changeumi3.value);
+            chart.data.datasets[1].data[2] = [newValue];
+            chart.update();
+        });
+        changeumi4.addEventListener('input', () => {
+            const newValue = parseInt(changeumi4.value);
+            chart.data.datasets[1].data[3] = [newValue];
+            chart.update();
+        });
+        changeumi5.addEventListener('input', () => {
+            const newValue = parseInt(changeumi5.value);
+            chart.data.datasets[1].data[4] = [newValue];
+            chart.update();
+        });
+        changeumi6.addEventListener('input', () => {
+            const newValue = parseInt(changeumi6.value);
+            chart.data.datasets[1].data[5] = [newValue];
+            chart.update();
+        });
+        
+        // FIM DA PARTE DINÂMICA DO GRÁFICO 1
+        
+        // INÍCIO DO GRÁFICO 2
+
+        var data1 = mes1.value
+        var data2 = mes2.value
+        var data3 = mes3.value
+        var data4 = mes4.value
+        var data5 = mes5.value
+        var data6 = mes6.value
+
+        var temperatura11 = Number(temp11.value)
+        var temperatura22 = Number(temp22.value)
+        var temperatura33 = Number(temp33.value)
+        var temperatura44 = Number(temp44.value)
+        var temperatura55 = Number(temp55.value)
+        var temperatura66 = Number(temp66.value)
+
+        var umidade11 = Number(umi11.value)
+        var umidade22 = Number(umi22.value)
+        var umidade33 = Number(umi33.value)
+        var umidade44 = Number(umi44.value)
+        var umidade55 = Number(umi55.value)
+        var umidade66 = Number(umi66.value)
+        
+        const chart2 = new Chart('myChart2', {
+            type: 'bar',
+            data: {
+                labels: [data1, data2, data3, data4, data5, data6],
+                datasets: [{
+                    label: 'Temperatura Média',
+                    data: [temperatura11, temperatura22, temperatura33, temperatura44, temperatura55, temperatura66],
+                    backgroundColor: 'rgba(255, 99, 132)',
+                    borderColor: 'rgba(255, 99, 132)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Umidade Média',
+                    data: [umidade11, umidade22, umidade33, umidade44, umidade55, umidade66],
+                    backgroundColor: 'rgba(54, 162, 235)',
+                    borderColor: 'rgba(54, 162, 235)',
+                    borderWidth: 1
+                }
+            ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // FIM DO GRÁFICO 2
+
+        // INÍCIO DA PARTE DINÂMICA DO GRÁFICO 2
+
+        const changemes1 = document.getElementById('mes1');
+        const changemes2 = document.getElementById('mes2');
+        const changemes3 = document.getElementById('mes3');
+        const changemes4 = document.getElementById('mes4');
+        const changemes5 = document.getElementById('mes5');
+        const changemes6 = document.getElementById('mes6');
+
+        const changetemp11 = document.getElementById('temp11');
+        const changetemp22 = document.getElementById('temp22');
+        const changetemp33 = document.getElementById('temp33');
+        const changetemp44 = document.getElementById('temp44');
+        const changetemp55 = document.getElementById('temp55');
+        const changetemp66 = document.getElementById('temp66');
+
+        const changeumi11 = document.getElementById('umi11');
+        const changeumi22 = document.getElementById('umi22');
+        const changeumi33 = document.getElementById('umi33');
+        const changeumi44 = document.getElementById('umi44');
+        const changeumi55 = document.getElementById('umi55');
+        const changeumi66 = document.getElementById('umi66');
+
+        changemes1.addEventListener('input', () => {
+            const newValue = changemes1.value;
+            chart2.data.labels[0] = [newValue];
+            chart2.update();
+        });
+        changemes2.addEventListener('input', () => {
+            const newValue = changemes2.value;
+            chart2.data.labels[1] = [newValue];
+            chart2.update();
+        });
+        changemes3.addEventListener('input', () => {
+            const newValue = changemes3.value;
+            chart2.data.labels[2] = [newValue];
+            chart2.update();
+        });
+        changemes4.addEventListener('input', () => {
+            const newValue = changemes4.value;
+            chart2.data.labels[3] = [newValue];
+            chart2.update();
+        });
+        changemes5.addEventListener('input', () => {
+            const newValue = changemes5.value;
+            chart2.data.labels[4] = [newValue];
+            chart2.update();
+        });
+        changemes6.addEventListener('input', () => {
+            const newValue = changemes6.value;
+            chart2.data.labels[5] = [newValue];
+            chart2.update();
+        });
+
+        changetemp11.addEventListener('input', () => {
+            const newValue = changetemp11.value;
+            chart2.data.datasets[0].data[0] = [newValue];
+            chart2.update();
+        });
+        changetemp22.addEventListener('input', () => {
+            const newValue = parseInt(changetemp22.value);
+            chart2.data.datasets[0].data[1] = [newValue];
+            chart2.update();
+        });
+        changetemp33.addEventListener('input', () => {
+            const newValue = parseInt(changetemp33.value);
+            chart2.data.datasets[0].data[2] = [newValue];
+            chart2.update();
+        });
+        changetemp44.addEventListener('input', () => {
+            const newValue = parseInt(changetemp44.value);
+            chart2.data.datasets[0].data[3] = [newValue];
+            chart2.update();
+        });
+        changetemp55.addEventListener('input', () => {
+            const newValue = parseInt(changetemp55.value);
+            chart2.data.datasets[0].data[4] = [newValue];
+            chart2.update();
+        });
+        changetemp66.addEventListener('input', () => {
+            const newValue = parseInt(changetemp66.value);
+            chart2.data.datasets[0].data[5] = [newValue];
+            chart2.update();
+        });
+
+        changeumi11.addEventListener('input', () => {
+            const newValue = parseInt(changeumi11.value);
+            chart2.data.datasets[1].data[0] = [newValue];
+            chart2.update();
+        });
+        changeumi22.addEventListener('input', () => {
+            const newValue = parseInt(changeumi22.value);
+            chart2.data.datasets[1].data[1] = [newValue];
+            chart2.update();
+        });
+        changeumi33.addEventListener('input', () => {
+            const newValue = parseInt(changeumi33.value);
+            chart2.data.datasets[1].data[2] = [newValue];
+            chart2.update();
+        });
+        changeumi44.addEventListener('input', () => {
+            const newValue = parseInt(changeumi44.value);
+            chart2.data.datasets[1].data[3] = [newValue];
+            chart2.update();
+        });
+        changeumi55.addEventListener('input', () => {
+            const newValue = parseInt(changeumi55.value);
+            chart2.data.datasets[1].data[4] = [newValue];
+            chart2.update();
+        });
+        changeumi66.addEventListener('input', () => {
+            const newValue = parseInt(changeumi66.value);
+            chart2.data.datasets[1].data[5] = [newValue];
+            chart2.update();
+        });
+        
+        // FIM DA PARTE DINÂMICA DO GRÁFICO 2
+      </script>
